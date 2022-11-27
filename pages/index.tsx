@@ -58,6 +58,10 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
 
         <h2>Your Todos &darr;</h2>
 
+        {todos.length === 0 && (
+          <h1 className={styles.placeholder}>No todos so far</h1>
+        )}
+
         {todos.map((todo) => (
           <div key={todo.id} className={styles.card} onClick={() => toggleTodo(todo.id)}>
             <p className={cn({ [styles.done]: todo.isDone })}>{todo.content}</p>

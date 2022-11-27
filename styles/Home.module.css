@@ -46,6 +46,11 @@
   text-align: center;
 }
 
+.placeholder {
+  width: 100%;
+  max-width: 800px;
+}
+
 .card {
   margin: 1rem;
   padding: 1.5rem;
