@@ -2,12 +2,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { GetStaticProps } from 'next';
-import { FC } from 'react';
+import { FC, useState, MouseEvent } from 'react';
 import { Todo } from '../types';
+import cn from 'classnames';
 
 export const getStaticProps: GetStaticProps = async () => {
   const { name } = await (await fetch('http://localhost:3000/api/hello')).json();
   const { todos } = await (await fetch('http://localhost:3000/api/todos')).json();
+
   return {
     props: {
       name,
@@ -21,7 +23,26 @@ interface Props {
   todos: Todo[];
 }
 
-const Home: FC<Props> = ({ name, todos }) => {
+const Home: FC<Props> = ({ name, todos: todosProps }) => {
+  const [todos, setTodos] = useState(todosProps);
+
+  const toggleTodo = async (id: string | number) => {
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos`, {
+      method: 'PATCH',
+      body: JSON.stringify({ id }),
+    })).json();
+    setTodos(todos);
+  };
+
+  const removeTodo = async (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: string | number) => {
+    event.stopPropagation();
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos`, {
+      method: 'DELETE',
+      body: JSON.stringify({ id }),
+    })).json();
+    setTodos(todos);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -38,8 +59,11 @@ const Home: FC<Props> = ({ name, todos }) => {
         <h2>Your Todos &darr;</h2>
 
         {todos.map((todo) => (
-          <div key={todo.id} className={styles.card}>
-            <p>{todo.content}</p>
+          <div key={todo.id} className={styles.card} onClick={() => toggleTodo(todo.id)}>
+            <p className={cn({ [styles.done]: todo.isDone })}>{todo.content}</p>
+            <button onClick={(event) => removeTodo(event, todo.id)}>
+              <Image src="/remove.png" alt="Remove the todo" width="24" height="24" />
+            </button>
           </div>
         ))}
       </main>
