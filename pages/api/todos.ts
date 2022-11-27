@@ -48,7 +48,7 @@ export default function handler(
       }
       break;
     default:
-      res.status(405).send({ todos });
+      res.status(405).json({ todos });
       throw Error('Method is not supported.');
   }
 }
