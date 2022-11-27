@@ -8,7 +8,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -49,6 +49,9 @@
 .card {
   margin: 1rem;
   padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   text-align: left;
   color: inherit;
   text-decoration: none;
@@ -76,6 +79,21 @@
   margin: 0;
   font-size: 1.25rem;
   line-height: 1.5;
+}
+
+.card p.done {
+  text-decoration: line-through;
+}
+
+.card button {
+  display: none;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.card:hover button {
+  display: block;
 }
 
 .logo {
