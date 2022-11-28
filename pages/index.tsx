@@ -27,18 +27,16 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
   const [todos, setTodos] = useState(todosProps);
 
   const toggleTodo = async (id: string | number) => {
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos`, {
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ id }),
     })).json();
     setTodos(todos);
   };
 
   const removeTodo = async (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: string | number) => {
     event.stopPropagation();
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos`, {
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
       method: 'DELETE',
-      body: JSON.stringify({ id }),
     })).json();
     setTodos(todos);
   };
