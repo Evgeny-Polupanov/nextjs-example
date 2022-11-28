@@ -6,10 +6,7 @@ type Data = {
   todos: Todo[];
 }
 
-export const todos = [
-  { id: uid(16), content: 'Learn Next.js', isDone: false },
-  { id: uid(16), content: 'Learn Node.js', isDone: false },
-];
+export const todos: Todo[] = [];
 
 export default function handler(
   req: NextApiRequest,
@@ -27,7 +24,7 @@ export default function handler(
         res.status(409).json({ todos });
       } else {
         let id = uid(16);
-        while (todos.findIndex((todo) => String(todo.id) === String(id)) !== -1) {
+        while (todos.some((todo) => String(todo.id) === String(id))) {
           id = uid(16);
         }
         todos.unshift({ id, content, isDone: false });
