@@ -17,7 +17,7 @@ export default function handler(
       res.status(200).json({ todos });
       break;
     case 'POST':
-      const content = JSON.parse(req?.body)?.content?.trim();
+      const content = req.body && JSON.parse(req?.body)?.content?.trim();
       if (!content || typeof content !== 'string') {
         res.status(400).json({ todos });
       } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
