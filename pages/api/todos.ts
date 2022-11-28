@@ -15,7 +15,7 @@ export default function handler(
   res: NextApiResponse<Data>,
 ) {
   let id: string | number;
-  switch (req.method) {
+  switch (req.method?.toUpperCase()) {
     case 'GET':
       res.status(200).json({ todos });
       break;
