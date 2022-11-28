@@ -1,13 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Todo } from '../../../types';
+import { uid } from 'uid';
 
 type Data = {
   todos: Todo[];
 }
 
 export const todos = [
-  { id: 1, content: 'Learn Next.js', isDone: false },
-  { id: 2, content: 'Learn Node.js', isDone: false },
+  { id: uid(16), content: 'Learn Next.js', isDone: false },
+  { id: uid(16), content: 'Learn Node.js', isDone: false },
 ];
 
 export default function handler(
@@ -17,6 +18,22 @@ export default function handler(
   switch (req.method?.toUpperCase()) {
     case 'GET':
       res.status(200).json({ todos });
+      break;
+    case 'POST':
+      const content = JSON.parse(req?.body)?.content?.trim();
+      if (!content) {
+        res.status(400).json({ todos });
+      } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
+        res.status(409).json({ todos });
+      } else {
+        const { content } = JSON.parse(req.body);
+        let id = uid(16);
+        while (todos.findIndex((todo) => String(todo.id) === String(id)) !== -1) {
+          id = uid(16);
+        }
+        todos.unshift({ id, content, isDone: false });
+        res.status(200).json({ todos });
+      }
       break;
     default:
       res.status(405).json({ todos });

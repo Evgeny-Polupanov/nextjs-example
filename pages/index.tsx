@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { GetStaticProps } from 'next';
-import { FC, useState, MouseEvent } from 'react';
+import { FC, useState, MouseEvent, FormEvent, useRef } from 'react';
 import { Todo } from '../types';
 import cn from 'classnames';
 
@@ -25,6 +25,21 @@ interface Props {
 
 const Home: FC<Props> = ({ name, todos: todosProps }) => {
   const [todos, setTodos] = useState(todosProps);
+  const todoInputRef = useRef<HTMLInputElement>(null);
+
+  const addTodo = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!todoInputRef.current?.value.trim()) {
+      return;
+    }
+    const { todos } = await (await fetch('http://localhost:3000/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({ content: todoInputRef.current?.value }),
+    })).json();
+    setTodos(todos);
+    todoInputRef.current.value = '';
+    todoInputRef.current.focus();
+  };
 
   const toggleTodo = async (id: string | number) => {
     const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
@@ -56,18 +71,24 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
 
         <h2>Your Todos &darr;</h2>
 
-        {todos.length === 0 && (
-          <h1 className={styles.placeholder}>No todos so far</h1>
-        )}
+        <section className={styles.wrapper}>
+          {todos.length === 0 && (
+            <h1 className={styles.placeholder}>No todos so far</h1>
+          )}
 
-        {todos.map((todo) => (
-          <div key={todo.id} className={styles.card} onClick={() => toggleTodo(todo.id)}>
-            <p className={cn({ [styles.done]: todo.isDone })}>{todo.content}</p>
-            <button onClick={(event) => removeTodo(event, todo.id)}>
-              <Image src="/remove.png" alt="Remove the todo" width="24" height="24" />
-            </button>
-          </div>
-        ))}
+          {todos.map((todo) => (
+            <div key={todo.id} className={styles.card} onClick={() => toggleTodo(todo.id)}>
+              <p className={cn({ [styles.done]: todo.isDone })}>{todo.content}</p>
+              <button onClick={(event) => removeTodo(event, todo.id)}>
+                <Image src="/remove.png" alt="Remove the todo" width="24" height="24" />
+              </button>
+            </div>
+          ))}
+        </section>
+
+        <form onSubmit={addTodo} className={styles.form}>
+          <input type="text" placeholder="Add Todo" className={styles.input} ref={todoInputRef} autoFocus />
+        </form>
       </main>
 
       <footer className={styles.footer}>
