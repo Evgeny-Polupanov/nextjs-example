@@ -33,16 +33,19 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
 
   const addTodo = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!todoInputRef.current?.value.trim()) {
+    const todoContent = todoInputRef.current?.value.trim();
+    if (!todoContent || todos.some((todo) => todo.content === todoContent)) {
       return;
     }
-    const { todos } = await (await fetch('http://localhost:3000/api/todos', {
+    const { todos: newTodos } = await (await fetch('http://localhost:3000/api/todos', {
       method: 'POST',
       body: JSON.stringify({ content: todoInputRef.current?.value }),
     })).json();
-    setTodos(todos);
-    todoInputRef.current.value = '';
-    todoInputRef.current.focus();
+    setTodos(newTodos);
+    if (todoInputRef.current) {
+      todoInputRef.current.value = '';
+      todoInputRef.current.focus();
+    }
   };
 
   const toggleTodo = async (id: string) => {
