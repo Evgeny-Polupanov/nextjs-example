@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Todo } from '../../../types';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { getTodos } from '../../../utils';
+import { uid } from 'uid';
 
 type Data = {
   todos: Todo[];
@@ -35,7 +36,11 @@ export default async function handler(
       } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
         res.status(409).json({ todos: [] });
       } else {
-        await todosCollection.insertOne({ content, isDone: false });
+        let _id = uid(16);
+        while (await todosCollection.findOne({ _id })) {
+          _id = uid(16);
+        }
+        await todosCollection.insertOne({ _id, content, isDone: false });
         res.status(200).json({ todos: await getTodos(todosCollection) });
       }
       break;
