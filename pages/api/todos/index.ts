@@ -26,11 +26,11 @@ export default async function handler(
 ) {
   switch (req.method?.toUpperCase()) {
     case 'GET':
-      res.status(200).json({ todos: await getTodos(todosCollection) });
+      res.status(200).json({ todos: await getTodos() });
       break;
     case 'POST':
       const content = req.body && JSON.parse(req?.body)?.content?.trim();
-      const todos = await getTodos(todosCollection);
+      const todos = await getTodos();
       if (!content || typeof content !== 'string') {
         res.status(400).json({ todos: [] });
       } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
@@ -41,7 +41,7 @@ export default async function handler(
           _id = uid(16);
         }
         await todosCollection.insertOne({ _id, content, isDone: false });
-        res.status(200).json({ todos: await getTodos(todosCollection) });
+        res.status(200).json({ todos: await getTodos() });
       }
       break;
     default:

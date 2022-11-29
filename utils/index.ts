@@ -1,9 +1,9 @@
-import { Collection } from 'mongodb';
 import { Todo } from '../types';
+import { todosCollection } from '../pages/api/todos';
 
-export const getTodos = async (collection?: Collection<Todo>): Promise<Todo[]> => {
-  if (collection) {
-    return await collection.find().toArray();
+export const getTodos = async (): Promise<Todo[]> => {
+  if (todosCollection) {
+    return await todosCollection.find().toArray();
   }
   return [];
 };

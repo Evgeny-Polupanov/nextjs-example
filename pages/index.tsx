@@ -6,11 +6,10 @@ import { FC, useState, MouseEvent, FormEvent, useRef, useEffect } from 'react';
 import { Todo } from '../types';
 import cn from 'classnames';
 import { getTodos } from '../utils';
-import { todosCollection } from './api/todos';
 
 export const getStaticProps: GetStaticProps = async () => {
   const { name } = await (await fetch('http://localhost:3000/api/hello')).json();
-  const todos = await getTodos(todosCollection);
+  const todos = await getTodos();
 
   return {
     props: {
