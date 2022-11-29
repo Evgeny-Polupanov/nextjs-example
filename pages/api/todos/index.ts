@@ -8,13 +8,11 @@ type Data = {
   todos: Todo[];
 }
 
-let mongoClient: MongoClient;
-let db: Db;
 export let todosCollection: Collection<Todo>;
 
 try {
-  mongoClient = new MongoClient('mongodb://localhost:27017/todos');
-  db = mongoClient.db();
+  const mongoClient = new MongoClient('mongodb://localhost:27017/todos');
+  const db = mongoClient.db();
   todosCollection = db.collection('todos');
 } catch (error) {
   console.error(error);
