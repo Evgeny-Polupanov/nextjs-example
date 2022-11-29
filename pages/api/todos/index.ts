@@ -1,34 +1,42 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Todo } from '../../../types';
-import { uid } from 'uid';
+import { Collection, Db, MongoClient } from 'mongodb';
+import { getTodos } from '../../../utils';
 
 type Data = {
   todos: Todo[];
 }
 
-export const todos: Todo[] = [];
+let mongoClient: MongoClient;
+let db: Db;
+export let todosCollection: Collection<Todo>;
 
-export default function handler(
+try {
+  mongoClient = new MongoClient('mongodb://localhost:27017/todos');
+  db = mongoClient.db();
+  todosCollection = db.collection('todos');
+} catch (error) {
+  console.error(error);
+}
+
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
   switch (req.method?.toUpperCase()) {
     case 'GET':
-      res.status(200).json({ todos });
+      res.status(200).json({ todos: await getTodos(todosCollection) });
       break;
     case 'POST':
       const content = req.body && JSON.parse(req?.body)?.content?.trim();
+      const todos = await getTodos(todosCollection);
       if (!content || typeof content !== 'string') {
         res.status(400).json({ todos: [] });
       } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
         res.status(409).json({ todos: [] });
       } else {
-        let id = uid(16);
-        while (todos.some((todo) => String(todo.id) === String(id))) {
-          id = uid(16);
-        }
-        todos.unshift({ id, content, isDone: false });
-        res.status(200).json({ todos });
+        await todosCollection.insertOne({ content, isDone: false });
+        res.status(200).json({ todos: await getTodos(todosCollection) });
       }
       break;
     default:

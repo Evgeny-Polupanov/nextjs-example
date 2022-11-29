@@ -5,6 +5,7 @@ import { GetStaticProps } from 'next';
 import { FC, useState, MouseEvent, FormEvent, useRef, useEffect } from 'react';
 import { Todo } from '../types';
 import cn from 'classnames';
+import { ObjectId, WithId } from 'mongodb';
 
 export const getStaticProps: GetStaticProps = async () => {
   const { name } = await (await fetch('http://localhost:3000/api/hello')).json();
@@ -20,7 +21,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
 interface Props {
   name: string;
-  todos: Todo[];
+  todos: WithId<Todo>[];
 }
 
 const Home: FC<Props> = ({ name, todos: todosProps }) => {
@@ -48,16 +49,16 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
     }
   };
 
-  const toggleTodo = async (id: string) => {
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
+  const toggleTodo = async (id: ObjectId) => {
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id.toString()}`, {
       method: 'PATCH',
     })).json();
     setTodos(todos);
   };
 
-  const removeTodo = async (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: string) => {
+  const removeTodo = async (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: ObjectId) => {
     event.stopPropagation();
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
+    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id.toString()}`, {
       method: 'DELETE',
     })).json();
     setTodos(todos);
@@ -84,9 +85,9 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
           )}
 
           {todos.map((todo) => (
-            <div key={todo.id} className={styles.card} onClick={() => toggleTodo(todo.id)}>
+            <div key={todo._id.toString()} className={styles.card} onClick={() => toggleTodo(todo._id)}>
               <p className={cn({ [styles.done]: todo.isDone })}>{todo.content}</p>
-              <button onClick={(event) => removeTodo(event, todo.id)}>
+              <button onClick={(event) => removeTodo(event, todo._id)}>
                 <Image src="/remove.png" alt="Remove the todo" width="24" height="24" />
               </button>
             </div>
