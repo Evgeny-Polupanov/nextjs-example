@@ -19,9 +19,9 @@ export default function handler(
     case 'POST':
       const content = req.body && JSON.parse(req?.body)?.content?.trim();
       if (!content || typeof content !== 'string') {
-        res.status(400).json({ todos });
+        res.status(400).json({ todos: [] });
       } else if (todos.some((todo) => todo.content.toUpperCase() === content.toUpperCase())) {
-        res.status(409).json({ todos });
+        res.status(409).json({ todos: [] });
       } else {
         let id = uid(16);
         while (todos.some((todo) => String(todo.id) === String(id))) {
@@ -32,7 +32,7 @@ export default function handler(
       }
       break;
     default:
-      res.status(405).json({ todos });
+      res.status(405).json({ todos: [] });
       throw Error('Method is not supported.');
   }
 }

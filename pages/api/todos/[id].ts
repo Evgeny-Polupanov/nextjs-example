@@ -18,7 +18,7 @@ export default function handler(
         todos.splice(todoIndexToDelete, 1);
         res.status(200).json({ todos });
       } else {
-        res.status(404).json({ todos });
+        res.status(404).json({ todos: [] });
       }
       break;
     case 'PATCH':
@@ -27,11 +27,11 @@ export default function handler(
         todos[todoIndexToSetIsDone].isDone = !todos[todoIndexToSetIsDone].isDone;
         res.status(200).json({ todos });
       } else {
-        res.status(404).json({ todos });
+        res.status(404).json({ todos: [] });
       }
       break;
     default:
-      res.status(405).json({ todos });
+      res.status(405).json({ todos: [] });
       throw Error('Method is not supported.');
   }
 }
