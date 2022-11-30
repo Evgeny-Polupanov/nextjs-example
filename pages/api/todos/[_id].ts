@@ -16,7 +16,7 @@ export default async function handler(
     case 'DELETE':
       const deletedTodo = await todosCollection.findOneAndDelete({ _id })
       if (deletedTodo.value) {
-        res.status(200).json({ todos: await getTodos(todosCollection) });
+        res.status(200).json({ todos: await getTodos() });
       } else {
         res.status(404).json({ todos: [] });
       }
@@ -27,7 +27,7 @@ export default async function handler(
         $set: { isDone: !todoToUpdate?.isDone },
       });
       if (updatedTodo.value) {
-        res.status(200).json({ todos: await getTodos(todosCollection) });
+        res.status(200).json({ todos: await getTodos() });
       } else {
         res.status(404).json({ todos: [] });
       }

@@ -8,23 +8,20 @@ import cn from 'classnames';
 import { getTodos } from '../utils';
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { name } = await (await fetch('http://localhost:3000/api/hello')).json();
   const todos = await getTodos();
 
   return {
     props: {
-      name,
       todos,
     },
   };
 };
 
 interface Props {
-  name: string;
   todos: Todo[];
 }
 
-const Home: FC<Props> = ({ name, todos: todosProps }) => {
+const Home: FC<Props> = ({ todos: todosProps }) => {
   const [todos, setTodos] = useState(todosProps);
   const todoInputRef = useRef<HTMLInputElement>(null);
 
@@ -74,7 +71,7 @@ const Home: FC<Props> = ({ name, todos: todosProps }) => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to Todo List, {name}
+          Welcome to Todo List
         </h1>
 
         <h2>Your Todos &darr;</h2>
