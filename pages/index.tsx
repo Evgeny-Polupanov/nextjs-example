@@ -35,7 +35,7 @@ const Home: FC<Props> = ({ todos: todosProps }) => {
     if (!todoContent || todos.some((todo) => todo.content === todoContent)) {
       return;
     }
-    const { todos: newTodos } = await (await fetch('http://localhost:3000/api/todos', {
+    const { todos: newTodos } = await (await fetch('/api/todos', {
       method: 'POST',
       body: JSON.stringify({ content: todoInputRef.current?.value }),
     })).json();
@@ -47,7 +47,7 @@ const Home: FC<Props> = ({ todos: todosProps }) => {
   };
 
   const toggleTodo = async (id: string) => {
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
+    const { todos } = await (await fetch(`/api/todos/${id}`, {
       method: 'PATCH',
     })).json();
     setTodos(todos);
@@ -55,7 +55,7 @@ const Home: FC<Props> = ({ todos: todosProps }) => {
 
   const removeTodo = async (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>, id: string) => {
     event.stopPropagation();
-    const { todos } = await (await fetch(`http://localhost:3000/api/todos/${id}`, {
+    const { todos } = await (await fetch(`/api/todos/${id}`, {
       method: 'DELETE',
     })).json();
     setTodos(todos);
